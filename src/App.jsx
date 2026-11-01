@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import "./App.css";
 import MapView from "./MapView.jsx";
+const API_URL = import.meta.env.VITE_API_URL;
 
 function Icon({ name, size = 20, ...props }) {
   const common = {
@@ -158,7 +159,7 @@ export default function App() {
     try {
       // STEP 1: Understand the user's journey using Gemini
       const understandResponse = await fetch(
-        "http://localhost:3001/api/understand-route",
+        `${API_URL}/api/understand-route`,
         {
           method: "POST",
           headers: {
@@ -207,7 +208,7 @@ export default function App() {
         );
       }
       // STEP 2: Calculate the actual route using OSRM
-      const routeResponse = await fetch("http://localhost:3001/api/route", {
+      const routeResponse = await fetch(`${API_URL}/api/route`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
