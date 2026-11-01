@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import "./App.css";
 import MapView from "./MapView.jsx";
-const API_URL = import.meta.env.VITE_API_URL;
 
 function Icon({ name, size = 20, ...props }) {
   const common = {
@@ -159,7 +158,7 @@ export default function App() {
     try {
       // STEP 1: Understand the user's journey using Gemini
       const understandResponse = await fetch(
-        `${API_URL}/api/understand-route`,
+        `https://prompt-to-map-dbmq.vercel.app/api/understand-route`,
         {
           method: "POST",
           headers: {
@@ -208,19 +207,22 @@ export default function App() {
         );
       }
       // STEP 2: Calculate the actual route using OSRM
-      const routeResponse = await fetch(`${API_URL}/api/route`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const routeResponse = await fetch(
+        `https://prompt-to-map-dbmq.vercel.app/api/route`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            origin: journey.origin,
+            destination: journey.destination,
+            travelMode: journey.travelMode,
+            originCoordinates:
+              journey.origin === "CURRENT_LOCATION" ? currentLocation : null,
+          }),
         },
-        body: JSON.stringify({
-          origin: journey.origin,
-          destination: journey.destination,
-          travelMode: journey.travelMode,
-          originCoordinates:
-            journey.origin === "CURRENT_LOCATION" ? currentLocation : null,
-        }),
-      });
+      );
 
       const routeResult = await routeResponse.json();
 
